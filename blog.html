@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BigSmart - 个人博客</title>
+<style>
+/* ===== CSS Variables & Reset ===== */
+:root {
+  --bg-primary: #f0f7f7;
+  --bg-card: #ffffff;
+  --bg-dark: #061b21;
+  --text-primary: #1a2b2f;
+  --text-secondary: #4a5f65;
+  --text-light: #8a9da3;
+  --accent-teal: #2db5a8;
+  --accent-teal-light: #4ecdc4;
+  --accent-coral: #e8735a;
+  --accent-gold: #d4a853;
+  --accent-blue: #3b82c4;
+  --accent-green: #4caf84;
+  --accent-purple: #7c5ce7;
+  --border-light: #e2ecec;
+  --border-medium: #c8d9d9;
+  --shadow-sm: 0 1px 3px rgba(6,27,33,0.06);
+  --shadow-md: 0 4px 16px rgba(6,27,33,0.08);
+  --shadow-lg: 0 8px 32px rgba(6,27,33,0.10);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Background Decoration ===== */
+.bg-decoration {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+.bg-orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(45,181,168,0.12) 0%, transparent 70%);
+  top: -150px; right: -100px;
+  border-radius: 50%;
+}
+.bg-orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(124,92,231,0.08) 0%, transparent 70%);
+  bottom: 10%; left: -100px;
+  border-radius: 50%;
+}
+.bg-orb-3 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(232,115,90,0.07) 0%, transparent 70%);
+  top: 50%; left: 55%;
+  border-radius: 50%;
+}
+.bg-grid {
+  width: 100%; height: 100%;
+  background-image:
+    linear-gradient(rgba(45,181,168,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45,181,168,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  top: 0; left: 0;
+}
+
+/* ===== Container ===== */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+/* ===== Top Header Bar ===== */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 24px;
+}
+.topbar-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center;
+  height: 64px;
+  gap: 24px;
+}
+/* Logo area with BS avatar */
+.logo-area {
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.logo-avatar {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; font-weight: 900; color: #fff;
+  box-shadow: 0 4px 12px rgba(45,181,168,0.35);
+  flex-shrink: 0;
+}
+.logo-text {
+  font-size: 1.15rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+/* Tab buttons */
+.tab-nav {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  flex: 1; justify-content: flex-end;
+}
+.tab-btn {
+  padding: 8px 16px; border-radius: 10px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  border: none; background: transparent;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  font-family: inherit;
+  white-space: nowrap;
+  position: relative;
+}
+.tab-btn:hover { color: var(--accent-teal); background: rgba(45,181,168,0.06); }
+.tab-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-teal-light));
+  box-shadow: 0 2px 8px rgba(45,181,168,0.3);
+}
+
+/* ===== Main Content Area ===== */
+.main-content {
+  flex: 1;
+  position: relative; z-index: 1;
+  padding: 40px 0 60px;
+}
+.panel {
+  display: none;
+  animation: panelIn 0.35s ease;
+}
+.panel.active { display: block; }
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Section Header ===== */
+.section-header { text-align: center; margin-bottom: 48px; }
+.section-tag {
+  display: inline-block;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--accent-teal); text-transform: uppercase;
+  background: rgba(45,181,168,0.1);
+  padding: 6px 16px; border-radius: 20px;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-size: 2.2rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-teal) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+}
+.section-subtitle { color: var(--text-light); font-size: 1rem; max-width: 560px; margin: 0 auto; }
+
+/* ===== Hero Panel ===== */
+.hero-layout {
+  display: flex; align-items: center; gap: 60px;
+  min-height: calc(100vh - 200px);
+}
+.hero-text { flex: 1; }
+.hero-greeting {
+  font-size: 1rem; font-weight: 600; color: var(--accent-teal);
+  letter-spacing: 0.06em; margin-bottom: 8px;
+}
+.hero-name {
+  font-size: 3.4rem; font-weight: 900; line-height: 1.15;
+  background: linear-gradient(135deg, #061b21 0%, #2db5a8 60%, #3b82c4 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.hero-tagline { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 6px; }
+.hero-detail { color: var(--text-light); font-size: 0.95rem; margin-bottom: 28px; max-width: 480px; }
+.hero-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fff; border: 1px solid var(--border-light);
+  padding: 8px 16px; border-radius: 24px;
+  font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 26px; border-radius: 28px;
+  font-size: 0.95rem; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  border: none; transition: var(--transition);
+  font-family: inherit;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-teal-light));
+  color: #fff; box-shadow: 0 4px 16px rgba(45,181,168,0.35);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,181,168,0.45); }
+.btn-outline {
+  background: #fff; color: var(--text-primary);
+  border: 2px solid var(--border-medium);
+}
+.btn-outline:hover { border-color: var(--accent-teal); color: var(--accent-teal); }
+
+/* Right side: big avatar */
+.hero-avatar-wrap {
+  flex-shrink: 0;
+  position: relative;
+}
+.hero-avatar-ring {
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45,181,168,0.10) 0%, rgba(124,92,231,0.06) 50%, transparent 70%);
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-avatar-big {
+  width: 140px; height: 140px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3.2rem; font-weight: 900; color: #fff;
+  box-shadow: 0 16px 48px rgba(45,181,168,0.3);
+}
+
+/* ===== Cards Grid ===== */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.card {
+  background: #fff; border-radius: var(--radius-lg);
+  padding: 32px; border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative; overflow: hidden;
+}
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-teal), var(--accent-purple));
+  opacity: 0; transition: var(--transition);
+}
+.card:hover::before { opacity: 1; }
+.card-icon {
+  width: 52px; height: 52px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; margin-bottom: 18px;
+}
+.card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
+.card-desc { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.7; }
+
+/* ===== Stats Row ===== */
+.stats-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 18px; margin-bottom: 40px;
+}
+.stat-card {
+  background: #fff; border-radius: var(--radius-md);
+  padding: 26px 20px; text-align: center;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.stat-number {
+  font-size: 2.2rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-label { color: var(--text-light); font-size: 0.85rem; margin-top: 4px; }
+
+/* ===== Tech Stack ===== */
+.tech-category { margin-bottom: 36px; }
+.tech-category-title {
+  font-size: 1.1rem; font-weight: 700; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.tech-category-title::before {
+  content: ''; width: 4px; height: 20px;
+  background: var(--accent-teal); border-radius: 2px;
+}
+.tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag {
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 0.85rem; font-weight: 500;
+  background: #fff; border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  transition: var(--transition);
+  cursor: default;
+}
+.tag:hover { border-color: var(--accent-teal); color: var(--accent-teal); background: rgba(45,181,168,0.04); }
+
+/* ===== Project Cards ===== */
+.project-card {
+  background: #fff; border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.project-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.project-header {
+  padding: 28px 28px 0;
+  display: flex; align-items: flex-start; gap: 16px;
+}
+.project-num {
+  flex-shrink: 0;
+  width: 42px; height: 42px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+  color: #fff; font-weight: 800; font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.project-body { padding: 16px 28px 28px; }
+.project-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+.project-desc { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; }
+.project-tags { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 28px 24px; }
+.project-tag {
+  font-size: 0.78rem; padding: 4px 12px; border-radius: 14px;
+  background: rgba(45,181,168,0.08); color: var(--accent-teal); font-weight: 600;
+}
+
+/* ===== Hobby Cards ===== */
+.hobby-card {
+  background: #fff; border-radius: var(--radius-md);
+  padding: 28px; text-align: center;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.hobby-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.hobby-emoji { font-size: 2.8rem; margin-bottom: 10px; }
+.hobby-name { font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; }
+.hobby-desc { color: var(--text-light); font-size: 0.85rem; }
+
+/* ===== Friend Card ===== */
+.friend-card {
+  background: linear-gradient(135deg, #fff 0%, #f9fdfd 100%);
+  border-radius: var(--radius-xl);
+  padding: 40px; text-align: center;
+  border: 2px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  max-width: 480px; margin: 0 auto;
+}
+.friend-avatar {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-coral));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; color: #fff; margin: 0 auto 18px;
+}
+.friend-name { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+.friend-desc { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
+
+/* ===== AI Chat ===== */
+.chat-container {
+  max-width: 700px; margin: 0 auto;
+  background: #fff; border-radius: var(--radius-xl);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.chat-header {
+  padding: 18px 24px;
+  background: linear-gradient(135deg, var(--bg-dark), #0d2b33);
+  color: #fff;
+  display: flex; align-items: center; gap: 12px;
+}
+.chat-header-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-teal-light));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+.chat-header-info { flex: 1; }
+.chat-header-name { font-weight: 700; font-size: 0.95rem; }
+.chat-header-status { font-size: 0.75rem; opacity: 0.8; }
+.chat-body {
+  padding: 20px; height: 340px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.chat-msg {
+  max-width: 85%; padding: 12px 18px; border-radius: 18px;
+  font-size: 0.9rem; line-height: 1.6;
+  animation: fadeInUp 0.3s ease;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.chat-msg.bot {
+  background: #f0f7f7; color: var(--text-primary);
+  align-self: flex-start; border-bottom-left-radius: 4px;
+}
+.chat-msg.user {
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-teal-light));
+  color: #fff; align-self: flex-end; border-bottom-right-radius: 4px;
+}
+.chat-msg.typing { opacity: 0.6; }
+.chat-input-row {
+  display: flex; gap: 10px; padding: 14px 20px;
+  border-top: 1px solid var(--border-light);
+}
+.chat-input {
+  flex: 1; padding: 10px 16px; border-radius: 24px;
+  border: 2px solid var(--border-light);
+  font-size: 0.9rem; outline: none; font-family: inherit;
+  transition: var(--transition);
+}
+.chat-input:focus { border-color: var(--accent-teal); }
+.chat-send {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--accent-teal); color: #fff; border: none;
+  font-size: 1.1rem; cursor: pointer; flex-shrink: 0;
+  transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.chat-send:hover { background: var(--accent-teal-light); transform: scale(1.05); }
+.chat-quick-qs { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 20px 14px; }
+.chat-quick {
+  font-size: 0.78rem; padding: 6px 14px; border-radius: 16px;
+  background: rgba(45,181,168,0.06); color: var(--accent-teal);
+  border: 1px solid rgba(45,181,168,0.15); cursor: pointer;
+  transition: var(--transition); font-family: inherit;
+}
+.chat-quick:hover { background: rgba(45,181,168,0.15); }
+
+/* ===== Mini Games ===== */
+.games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.game-card {
+  background: #fff; border-radius: var(--radius-lg);
+  padding: 28px; border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.game-card:hover { box-shadow: var(--shadow-md); }
+.game-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.game-icon {
+  width: 46px; height: 46px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+}
+.game-title { font-size: 1.1rem; font-weight: 700; }
+.game-area { min-height: 100px; }
+.game-input-row { display: flex; gap: 8px; margin-top: 10px; }
+.game-input {
+  flex: 1; padding: 10px 16px; border-radius: 20px;
+  border: 2px solid var(--border-light);
+  font-size: 0.9rem; outline: none; font-family: inherit;
+}
+.game-input:focus { border-color: var(--accent-teal); }
+.game-btn {
+  padding: 10px 20px; border-radius: 20px;
+  background: var(--accent-teal); color: #fff;
+  border: none; font-weight: 600; cursor: pointer;
+  font-family: inherit; font-size: 0.9rem;
+  transition: var(--transition);
+}
+.game-btn:hover { background: var(--accent-teal-light); }
+.game-btn.small { padding: 6px 14px; font-size: 0.8rem; }
+.game-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 8px; }
+.game-result { font-size: 0.9rem; margin-top: 8px; font-weight: 600; }
+.typing-text {
+  font-size: 1rem; font-weight: 600; color: var(--text-secondary);
+  margin-bottom: 10px; padding: 14px; background: #f8fafa;
+  border-radius: var(--radius-sm); letter-spacing: 0.02em;
+}
+.typing-stats { display: flex; gap: 16px; margin-top: 8px; font-size: 0.85rem; color: var(--text-light); }
+.typing-stat { font-weight: 700; color: var(--accent-teal); }
+
+/* ===== Two Column Layout ===== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.col-full { grid-column: 1 / -1; }
+
+/* ===== Footer ===== */
+.footer {
+  background: var(--bg-dark); color: rgba(255,255,255,0.7);
+  text-align: center; padding: 32px 24px;
+  font-size: 0.85rem; position: relative; z-index: 1;
+}
+.footer a { color: var(--accent-teal-light); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .hero-layout { flex-direction: column-reverse; text-align: center; gap: 32px; min-height: auto; }
+  .hero-avatar-ring { width: 180px; height: 180px; }
+  .hero-avatar-big { width: 110px; height: 110px; font-size: 2.4rem; }
+  .hero-name { font-size: 2.2rem; }
+  .hero-badges { justify-content: center; }
+  .hero-actions { justify-content: center; }
+  .section-title { font-size: 1.7rem; }
+  .cards-grid, .games-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+  .tab-btn { padding: 6px 12px; font-size: 0.78rem; }
+  .topbar-inner { gap: 12px; }
+  .logo-text { display: none; }
+}
+@media (max-width: 480px) {
+  .tab-nav { gap: 2px; }
+  .tab-btn { padding: 6px 10px; font-size: 0.72rem; border-radius: 8px; }
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-teal); }
+</style>
+</head>
+<body>
+
+<!-- Background Decoration -->
+<div class="bg-decoration bg-grid"></div>
+<div class="bg-decoration bg-orb-1"></div>
+<div class="bg-decoration bg-orb-2"></div>
+<div class="bg-decoration bg-orb-3"></div>
+
+<!-- ===== Top Bar ===== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo-area">
+      <div class="logo-avatar">BS</div>
+      <span class="logo-text">BigSmart</span>
+    </div>
+    <nav class="tab-nav" id="tabNav">
+      <button class="tab-btn active" data-panel="home">🏠 首页</button>
+      <button class="tab-btn" data-panel="about">📋 关于我</button>
+      <button class="tab-btn" data-panel="achievements">🏆 成果</button>
+      <button class="tab-btn" data-panel="tech">💻 技术栈</button>
+      <button class="tab-btn" data-panel="projects">📦 项目</button>
+      <button class="tab-btn" data-panel="opensource">🐙 开源</button>
+      <button class="tab-btn" data-panel="hobbies">⚽ 爱好</button>
+      <button class="tab-btn" data-panel="friend">🤝 挚友</button>
+      <button class="tab-btn" data-panel="chat">🤖 AI问答</button>
+      <button class="tab-btn" data-panel="games">🎮 小游戏</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== Main Content ===== -->
+<main class="main-content">
+  <div class="container">
+
+    <!-- HOME -->
+    <div class="panel active" id="panel-home">
+      <div class="hero-layout">
+        <div class="hero-text">
+          <div class="hero-greeting">👋 你好，我是</div>
+          <h1 class="hero-name">BigSmart</h1>
+          <p class="hero-tagline">牛津大学 · 人工智能 · 开源开发者</p>
+          <p class="hero-detail">创新实验室 AI 方向总负责人，深耕开源项目研发与技术分享，持续产出落地项目的全栈开发者</p>
+          <div class="hero-badges">
+            <span class="badge">🏆 四十项国一</span>
+            <span class="badge">📜 三十项专利</span>
+            <span class="badge">🐙 ANEMONE-ops</span>
+            <span class="badge">🎓 牛津大学</span>
+          </div>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="switchPanel('about')">了解更多</button>
+            <button class="btn btn-outline" onclick="switchPanel('chat')">🤖 AI 问答</button>
+            <a href="https://github.com/ANEMONE-ops" target="_blank" class="btn btn-outline">🐙 GitHub</a>
+          </div>
+        </div>
+        <div class="hero-avatar-wrap">
+          <div class="hero-avatar-ring">
+            <div class="hero-avatar-big">BS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="panel" id="panel-about">
+      <div class="section-header">
+        <div class="section-tag">About Me</div>
+        <h2 class="section-title">关于我</h2>
+        <p class="section-subtitle">一名热爱技术、热爱生活的 AI 开发者</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon" style="background: rgba(45,181,168,0.1);">🎓</div>
+          <div class="card-title">教育背景</div>
+          <div class="card-desc">
+            牛津大学人工智能方向本科在读。在校内创新实验室担任 <strong>AI 方向总负责人</strong>，带领团队进行前沿技术探索与项目落地。
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(124,92,231,0.1);">💡</div>
+          <div class="card-title">开源精神</div>
+          <div class="card-desc">
+            网络常用网名 <strong>BigSmart</strong>，GitHub 开源账号 <strong>ANEMONE-ops</strong>。长期深耕开源项目研发与技术分享，坚持将所有代码完全开源，持续维护更新。
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(232,115,90,0.1);">🚀</div>
+          <div class="card-title">综合能力</div>
+          <div class="card-desc">
+            擅长团队整体统筹管理、国家级赛事全流程申报材料撰写、商业路演与技术答辩 PPT 设计排版、知识产权规划布局，能够独立完成从需求调研、系统开发到成果申报的完整闭环。
+          </div>
+        </div>
+      </div>
+
+      <!-- English -->
+      <div class="section-header" style="margin-top: 56px;">
+        <div class="section-tag">English Version</div>
+        <h2 class="section-title">About Me (EN)</h2>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon" style="background: rgba(45,181,168,0.1);">🌍</div>
+          <div class="card-title">Background</div>
+          <div class="card-desc">
+            I am an undergraduate student majoring in <strong>Artificial Intelligence at the University of Oxford</strong>. I serve as the person in charge of the AI group in the innovation lab, focusing on developing and maintaining open-source projects.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(212,168,83,0.15);">🏆</div>
+          <div class="card-title">Achievements & Honors</div>
+          <div class="card-desc">
+            • 3 independent software copyrights from self-developed systems<br>
+            • National first prizes in iCan, Internet+, Challenge Cup, and Three Creation Competition<br>
+            • Experienced in team management, competition writing, defense PPT design, and IP planning
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(59,130,196,0.1);">💻</div>
+          <div class="card-title">Tech Stack</div>
+          <div class="card-desc" style="font-size:0.85rem;">
+            <strong>AI Core:</strong> PyTorch, OpenCV CV, RAG, Knowledge Graph, Word2Vec, TensorBoard, Seq2Seq<br>
+            <strong>Full-stack:</strong> FastAPI, SpringBoot, Java, Redis, MyBatis, Data Viz, WeChat Mini Program<br>
+            <strong>Hardware:</strong> 74LS181, 6116 Memory, Micro Command Controller Simulation<br>
+            <strong>Tools:</strong> Git/GitHub, Anaconda, Multi-terminal Deployment
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(76,175,132,0.1);">🤝</div>
+          <div class="card-title">Best Friend</div>
+          <div class="card-desc">
+            My best friend <strong>WuJiaZhe</strong> is honest, sincere, kind and pure. A truly trustworthy and wonderful friend to have.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="panel" id="panel-achievements">
+      <div class="section-header">
+        <div class="section-tag">Achievements</div>
+        <h2 class="section-title">学业与竞赛成果</h2>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number">400</div>
+          <div class="stat-label">国家级一等奖</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">300</div>
+          <div class="stat-label">发明专利</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">3</div>
+          <div class="stat-label">核心落地项目</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">1</div>
+          <div class="stat-label">牛津大学实验室负责人</div>
+        </div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-title">🏆 iCan 全国大学生创新创业大赛</div>
+          <div class="card-desc">国家级一等奖</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏆 "互联网+" 大学生创新创业大赛</div>
+          <div class="card-desc">国家级一等奖</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏆 "挑战杯" 全国大学生课外学术科技作品竞赛</div>
+          <div class="card-desc">国家级一等奖</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏆 三创赛全国总决赛</div>
+          <div class="card-desc">国家级一等奖</div>
+        </div>
+      </div>
+      <div style="margin-top: 28px; text-align: center;">
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          📜 已独立完成 <strong>3 项软件著作权</strong>登记，全部来源于自主研发的工程系统与 AI 算法平台
+        </p>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 6px;">
+          📋 具备完整的项目孵化、赛道答辩、成果转化全流程实操经验
+        </p>
+      </div>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="panel" id="panel-tech">
+      <div class="section-header">
+        <div class="section-tag">Tech Stack</div>
+        <h2 class="section-title">完整技术栈体系</h2>
+      </div>
+      <div class="tech-category">
+        <div class="tech-category-title">🧠 AI 核心算法领域</div>
+        <div class="tags">
+          <span class="tag">PyTorch</span>
+          <span class="tag">OpenCV 计算机视觉</span>
+          <span class="tag">图像识别</span>
+          <span class="tag">图像分割</span>
+          <span class="tag">目标检测</span>
+          <span class="tag">RAG 检索增强生成</span>
+          <span class="tag">知识图谱构建与存储</span>
+          <span class="tag">Word2Vec 词向量训练</span>
+          <span class="tag">TensorBoard 可视化</span>
+          <span class="tag">中文分词算法</span>
+          <span class="tag">Seq2Seq 序列生成模型</span>
+          <span class="tag">垂直领域大模型微调与部署</span>
+        </div>
+      </div>
+      <div class="tech-category">
+        <div class="tech-category-title">⚙️ 后端与全栈开发</div>
+        <div class="tags">
+          <span class="tag">FastAPI</span>
+          <span class="tag">SpringBoot</span>
+          <span class="tag">Java 底层开发</span>
+          <span class="tag">Redis 缓存</span>
+          <span class="tag">MyBatis 持久层</span>
+          <span class="tag">数据可视化大屏</span>
+          <span class="tag">微信小程序</span>
+          <span class="tag">多端交互联动平台</span>
+          <span class="tag">智能显微镜配套 AI 系统</span>
+          <span class="tag">高并发服务架构</span>
+        </div>
+      </div>
+      <div class="tech-category">
+        <div class="tech-category-title">🔧 底层硬件仿真</div>
+        <div class="tags">
+          <span class="tag">74LS181 运算器</span>
+          <span class="tag">6116 存储器芯片</span>
+          <span class="tag">微命令控制器逻辑设计</span>
+          <span class="tag">硬件仿真调试</span>
+          <span class="tag">软硬件复合开发</span>
+        </div>
+      </div>
+      <div class="tech-category">
+        <div class="tech-category-title">🛠️ 工程开发工具</div>
+        <div class="tags">
+          <span class="tag">Git / GitHub</span>
+          <span class="tag">Anaconda 虚拟环境管理</span>
+          <span class="tag">PC 端部署</span>
+          <span class="tag">移动端部署</span>
+          <span class="tag">嵌入式部署</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="panel" id="panel-projects">
+      <div class="section-header">
+        <div class="section-tag">Core Projects</div>
+        <h2 class="section-title">三大核心落地项目</h2>
+      </div>
+      <div class="cards-grid">
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-num">1</div>
+            <div>
+              <div class="project-title">星鉴岗谱</div>
+              <div class="project-desc" style="margin-bottom:0;">Star Recruitment Spectrum</div>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-desc">
+              面向求职招聘领域搭建的垂直大模型应用系统，通过知识图谱梳理企业、岗位、求职者多维关联关系，结合 <strong>RAG 检索增强生成</strong>技术完成简历可信度、岗位匹配度智能评分，解决行业内简历信息失真、岗位匹配低效的痛点。
+            </div>
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">RAG</span>
+            <span class="project-tag">知识图谱</span>
+            <span class="project-tag">大模型</span>
+            <span class="project-tag">智能评分</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-num" style="background: linear-gradient(135deg, var(--accent-purple), #9b7cf0);">2</div>
+            <div>
+              <div class="project-title">外周血细胞智能分类血液病辅诊一体化平台</div>
+              <div class="project-desc" style="margin-bottom:0;">Blood Cell Intelligent Diagnosis System</div>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-desc">
+              面向医疗辅助诊断场景的全栈落地项目，融合<strong>智能显微镜图像采集算法、实时数据可视化大屏、微信小程序移动端交互、自主研发 AI 智能体</strong>四大模块，实现血细胞自动识别、分类计数、初步血液病筛查，为基层医疗机构提供轻量化智能辅助诊断方案。
+            </div>
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">计算机视觉</span>
+            <span class="project-tag">AI Agent</span>
+            <span class="project-tag">微信小程序</span>
+            <span class="project-tag">数据可视化</span>
+            <span class="project-tag">医疗AI</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-num" style="background: linear-gradient(135deg, var(--accent-green), #6dd4a0);">3</div>
+            <div>
+              <div class="project-title">河流漂浮物智能检测系统</div>
+              <div class="project-desc" style="margin-bottom:0;">River Floating Object Detection System</div>
+            </div>
+          </div>
+          <div class="project-body">
+            <div class="project-desc">
+              聚焦水域环境治理赛道，基于<strong>计算机视觉目标检测算法</strong>实现河道漂浮垃圾实时识别、区域污染量化统计、污染点位可视化标记，可对接河道监控设备自动完成水域环境监测，助力水环境数字化治理。
+            </div>
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">目标检测</span>
+            <span class="project-tag">计算机视觉</span>
+            <span class="project-tag">环境治理</span>
+            <span class="project-tag">实时识别</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPEN SOURCE -->
+    <div class="panel" id="panel-opensource">
+      <div class="section-header">
+        <div class="section-tag">Open Source</div>
+        <h2 class="section-title">GitHub 开源仓库</h2>
+        <p class="section-subtitle">开源账号：<strong>ANEMONE-ops</strong></p>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon" style="background: rgba(45,181,168,0.1);">📂</div>
+          <div class="card-title">课程实验代码</div>
+          <div class="card-desc">大学课程硬件/算法实验代码完整归档，涵盖计算机组成原理、算法设计与分析等核心课程。</div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(124,92,231,0.1);">🏆</div>
+          <div class="card-title">国赛完整开源项目</div>
+          <div class="card-desc">历届国家级竞赛完整项目源码，含文档、答辩材料、系统设计全流程资料。</div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(232,115,90,0.1);">🤖</div>
+          <div class="card-title">AI 算法可运行 Demo</div>
+          <div class="card-desc">各类 AI 算法可直接运行的 Demo，方便同行开发者参考学习、二次迭代。</div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(76,175,132,0.1);">📊</div>
+          <div class="card-title">数据可视化大屏源码</div>
+          <div class="card-desc">数据可视化大屏整套源码，所有代码完全开源，持续维护更新。</div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 28px;">
+        <a href="https://github.com/ANEMONE-ops" target="_blank" class="btn btn-primary">🐙 访问 GitHub 仓库</a>
+      </div>
+    </div>
+
+    <!-- HOBBIES -->
+    <div class="panel" id="panel-hobbies">
+      <div class="section-header">
+        <div class="section-tag">Hobbies & Life</div>
+        <h2 class="section-title">个人爱好与生活</h2>
+      </div>
+      <div class="section-header" style="margin-bottom: 28px;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">🏅 专业赛事经历</h3>
+      </div>
+      <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="hobby-card">
+          <div class="hobby-emoji">⚽</div>
+          <div class="hobby-name">足球</div>
+          <div class="hobby-desc">曾登上世界杯赛场参与竞技</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-emoji">🏓</div>
+          <div class="hobby-name">乒乓球</div>
+          <div class="hobby-desc">参与世界乒乓球锦标赛</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-emoji">🎱</div>
+          <div class="hobby-name">台球</div>
+          <div class="hobby-desc">登上独牙千万奖金级别赛事舞台</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-emoji">🏸</div>
+          <div class="hobby-name">羽毛球</div>
+          <div class="hobby-desc">赛场曾击败李宗伟</div>
+        </div>
+      </div>
+      <div style="margin-top: 40px;">
+        <div class="section-header" style="margin-bottom: 20px;">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">💝 开源分享 & 志愿服务</h3>
+        </div>
+        <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+          <div class="card">
+            <div class="card-icon" style="background: rgba(45,181,168,0.1);">📝</div>
+            <div class="card-title">技术分享</div>
+            <div class="card-desc">每完成一套系统都会完整记录开发踩坑复盘、优化思路，乐于在开源社区、技术平台和各地开发者交流技术难题、探讨方案优化。</div>
+          </div>
+          <div class="card">
+            <div class="card-icon" style="background: rgba(232,115,90,0.1);">🤝</div>
+            <div class="card-title">社会志愿服务</div>
+            <div class="card-desc">长期参与各类社会志愿服务，乐于在课余时间参与公益实践，用行动回馈社会。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEST FRIEND -->
+    <div class="panel" id="panel-friend">
+      <div class="section-header">
+        <div class="section-tag">Best Friend</div>
+        <h2 class="section-title">挚友介绍</h2>
+      </div>
+      <div class="friend-card">
+        <div class="friend-avatar">武</div>
+        <div class="friend-name">WuJiaZhe</div>
+        <div class="friend-desc">
+          为人憨厚老实，待人真诚善良，性格单纯质朴。<br>
+          是相处起来十分舒服、值得深交的好朋友。🤝
+          （除了喜欢吃柠檬）
+        </div>
+      </div>
+    </div>
+
+    <!-- AI CHAT -->
+    <div class="panel" id="panel-chat">
+      <div class="section-header">
+        <div class="section-tag">AI Assistant</div>
+        <h2 class="section-title">智能问答</h2>
+        <p class="section-subtitle">有问题问我！我会基于 BigSmart 的个人信息为你解答</p>
+      </div>
+      <div class="chat-container">
+        <div class="chat-header">
+          <div class="chat-header-avatar">🤖</div>
+          <div class="chat-header-info">
+            <div class="chat-header-name">BigSmart AI 助手</div>
+            <div class="chat-header-status">🟢 在线 · 基于个人信息知识库</div>
+          </div>
+        </div>
+        <div class="chat-body" id="chatBody">
+          <div class="chat-msg bot">
+            👋 你好！我是 BigSmart 的 AI 助手。<br>
+            你可以问我关于他的教育背景、技术栈、项目经历、赛事荣誉、爱好等方面的问题！<br><br>
+            试试问：<br>• "BigSmart 的技术栈是什么？"<br>• "他有哪些核心项目？"<br>• "他参加过哪些比赛？"
+          </div>
+        </div>
+        <div class="chat-quick-qs" id="quickQuestions">
+          <button class="chat-quick" onclick="askQuick('BigSmart的技术栈是什么？')">技术栈</button>
+          <button class="chat-quick" onclick="askQuick('BigSmart有哪些核心项目？')">核心项目</button>
+          <button class="chat-quick" onclick="askQuick('BigSmart获得过哪些奖项？')">赛事荣誉</button>
+          <button class="chat-quick" onclick="askQuick('BigSmart有什么爱好？')">个人爱好</button>
+          <button class="chat-quick" onclick="askQuick('介绍一下BigSmart的挚友')">挚友介绍</button>
+          <button class="chat-quick" onclick="askQuick('BigSmart的GitHub是什么？')">GitHub</button>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" class="chat-input" id="chatInput" placeholder="输入你的问题..." onkeydown="if(event.key==='Enter')sendMessage()">
+          <button class="chat-send" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINI GAMES -->
+    <div class="panel" id="panel-games">
+      <div class="section-header">
+        <div class="section-tag">Mini Games</div>
+        <h2 class="section-title">休闲小游戏</h2>
+        <p class="section-subtitle">学累了？来放松一下吧 🎮</p>
+      </div>
+      <div class="games-grid">
+        <!-- Game 1: Number Guessing -->
+        <div class="game-card">
+          <div class="game-header">
+            <div class="game-icon" style="background: rgba(45,181,168,0.12);">🎯</div>
+            <div class="game-title">猜数字游戏</div>
+          </div>
+          <div class="game-area">
+            <p style="font-size:0.85rem;color:var(--text-light);">我想了一个 1~100 之间的数字，来猜猜看！</p>
+            <div id="guessHint" class="game-hint">🤔 你还有 <strong>7</strong> 次机会</div>
+            <div id="guessResult" class="game-result"></div>
+            <div class="game-input-row">
+              <input type="number" class="game-input" id="guessInput" placeholder="输入 1~100" min="1" max="100" onkeydown="if(event.key==='Enter')makeGuess()">
+              <button class="game-btn" onclick="makeGuess()">猜！</button>
+            </div>
+            <button class="game-btn small" style="margin-top:8px;background:var(--text-light);" onclick="resetGuessGame()">🔄 重新开始</button>
+          </div>
+        </div>
+        <!-- Game 2: Typing Speed -->
+        <div class="game-card">
+          <div class="game-header">
+            <div class="game-icon" style="background: rgba(124,92,231,0.12);">⌨️</div>
+            <div class="game-title">打字速度测试</div>
+          </div>
+          <div class="game-area">
+            <p style="font-size:0.85rem;color:var(--text-light);">输入下方文本，测测你的手速！</p>
+            <div class="typing-text" id="typingTarget">Artificial Intelligence changes the world.</div>
+            <div class="game-input-row">
+              <input type="text" class="game-input" id="typingInput" placeholder="在这里输入..." oninput="checkTyping()">
+              <button class="game-btn" onclick="resetTypingGame()">🔄</button>
+            </div>
+            <div id="typingFeedback" class="game-result"></div>
+            <div class="typing-stats">
+              <span>⏱ 用时: <span class="typing-stat" id="typingTime">0.0s</span></span>
+              <span>📝 正确率: <span class="typing-stat" id="typingAccuracy">0%</span></span>
+              <span>🚀 WPM: <span class="typing-stat" id="typingWPM">0</span></span>
+            </div>
+          </div>
+        </div>
+        <!-- Game 3: Reaction Time -->
+        <div class="game-card">
+          <div class="game-header">
+            <div class="game-icon" style="background: rgba(232,115,90,0.12);">⚡</div>
+            <div class="game-title">反应速度测试</div>
+          </div>
+          <div class="game-area">
+            <p style="font-size:0.85rem;color:var(--text-light);">当红色方块变绿时，尽快点击！</p>
+            <div id="reactionBox" style="width:100%;height:120px;background:#e8735a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.2rem;cursor:pointer;transition:background 0.15s;user-select:none;" onclick="reactClick()">
+              点击开始测试
+            </div>
+            <div id="reactionResult" class="game-result" style="text-align:center;"></div>
+            <div class="typing-stats" style="justify-content:center;">
+              <span>🏆 最佳: <span class="typing-stat" id="reactionBest">-- ms</span></span>
+              <span>📊 平均: <span class="typing-stat" id="reactionAvg">-- ms</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p style="font-weight:700;font-size:1rem;color:#fff;margin-bottom:6px;">BigSmart · ANEMONE-ops</p>
+    <p>牛津大学 · 人工智能 · 开源开发者</p>
+    <p style="margin-top:6px;">
+      <a href="https://github.com/ANEMONE-ops" target="_blank">GitHub</a> ·
+      Made with ❤️ by BigSmart
+    </p>
+  </div>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+// ===== Panel Switching =====
+function switchPanel(name) {
+  // Update buttons
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[data-panel="${name}"]`);
+  if (btn) btn.classList.add('active');
+  // Update panels
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + name);
+  if (panel) panel.classList.add('active');
+  // Scroll to top of content
+  document.querySelector('.main-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Tab button click handlers
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchPanel(btn.dataset.panel));
+});
+
+// ===== AI Chatbot =====
+const knowledgeBase = {
+  intro: "BigSmart 是牛津大学人工智能方向本科在读生，创新实验室 AI 方向总负责人，GitHub 账号 ANEMONE-ops，是一名持续产出落地项目的开源开发者。",
+  tech: "BigSmart 的技术栈非常全面：AI核心领域包括 PyTorch、OpenCV 计算机视觉（图像识别、分割、目标检测）、RAG 检索增强生成、知识图谱、Word2Vec、TensorBoard、Seq2Seq；后端与全栈包括 FastAPI、SpringBoot、Java、Redis、MyBatis、数据可视化大屏、微信小程序；硬件方面精通 74LS181 运算器、6116 存储器仿真；工程工具方面熟练使用 Git/GitHub、Anaconda。",
+  projects: "BigSmart 有三大核心落地项目：1. 星鉴岗谱——基于 RAG + 知识图谱的招聘数据可信评分系统；2. 外周血细胞智能分类血液病辅诊一体化平台——融合智能显微镜、数据可视化大屏、微信小程序和 AI 智能体的医疗辅助诊断系统；3. 河流漂浮物智能检测系统——基于计算机视觉的水域环境治理方案。",
+  awards: "BigSmart 获得了四项国家级一等奖：iCan 全国大学生创新创业大赛、'互联网+'大学生创新创业大赛、'挑战杯'全国大学生课外学术科技作品竞赛、三创赛全国总决赛。此外还独立完成了 3 项软件著作权登记。",
+  hobbies: "BigSmart 热爱多项体育运动且拥有专业赛事经历：足球曾登上世界杯赛场、乒乓球参与世界乒乓球锦标赛、台球登上独牙千万奖金级别赛事舞台、羽毛球赛场曾击败李宗伟。此外还长期参与社会志愿服务。",
+  github: "BigSmart 的 GitHub 账号是 ANEMONE-ops，仓库内完整归档了大学课程硬件/算法实验代码、历届国赛完整开源项目、各类 AI 算法可运行 Demo、数据可视化大屏整套源码，所有代码完全开源，持续维护更新。",
+  friend: "BigSmart 的挚友叫 WuJiaZhe，为人憨厚老实，待人真诚善良，性格单纯质朴，是相处起来十分舒服、值得深交的好朋友。",
+  oxford: "BigSmart 目前在牛津大学攻读人工智能方向本科学位，并在校内创新实验室担任 AI 方向总负责人，带领团队进行前沿技术探索。",
+  skills: "BigSmart 具备项目孵化、赛道答辩、成果转化全流程实操经验，擅长团队整体统筹管理、国家级赛事全流程申报材料撰写、商业路演与技术答辩 PPT 设计排版、软件著作权/专利等知识产权规划布局。"
+};
+
+function getAIResponse(query) {
+  const q = query.toLowerCase();
+  if (q.includes('技术栈') || q.includes('技术') && !q.includes('朋友') || q.includes('会什么') || q.includes('skill') || q.includes('tech')) {
+    return knowledgeBase.tech;
+  }
+  if (q.includes('项目') || q.includes('作品') || q.includes('project')) {
+    return knowledgeBase.projects;
+  }
+  if (q.includes('奖') || q.includes('比赛') || q.includes('竞赛') || q.includes('国一') || q.includes('award') || q.includes('achievement')) {
+    return knowledgeBase.awards;
+  }
+  if (q.includes('爱好') || q.includes('运动') || q.includes('足球') || q.includes('乒乓') || q.includes('台球') || q.includes('羽毛') || q.includes('hobby') || q.includes('sport')) {
+    return knowledgeBase.hobbies;
+  }
+  if (q.includes('github') || q.includes('开源') || q.includes('仓库') || q.includes('ANEMONE') || q.includes('代码')) {
+    return knowledgeBase.github;
+  }
+  if (q.includes('朋友') || q.includes('挚友') || q.includes('好友') || q.includes('wujiazhe') || q.includes('WuJiaZhe') || q.includes('吴')) {
+    return knowledgeBase.friend;
+  }
+  if (q.includes('牛津') || q.includes('大学') || q.includes('学校') || q.includes('oxford') || q.includes('教育')) {
+    return knowledgeBase.oxford;
+  }
+  if (q.includes('能力') || q.includes('擅长') || q.includes('软著') || q.includes('知识产权')) {
+    return knowledgeBase.skills;
+  }
+  if (q.includes('你好') || q.includes('嗨') || q.includes('hello') || q.includes('hi') || q.includes('介绍') || q.includes('who')) {
+    return knowledgeBase.intro + " 有什么具体想了解的吗？";
+  }
+  return "这个问题我不太确定呢 😅 你可以试试问我关于 BigSmart 的技术栈、核心项目、赛事荣誉、个人爱好、GitHub 开源、挚友介绍或者教育背景～";
+}
+
+function addMessage(text, type) {
+  const body = document.getElementById('chatBody');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg ' + type;
+  msg.textContent = text;
+  body.appendChild(msg);
+  body.scrollTop = body.scrollHeight;
+  return msg;
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  input.value = '';
+  const typing = addMessage('正在思考...', 'bot typing');
+  setTimeout(() => {
+    typing.remove();
+    addMessage(getAIResponse(text), 'bot');
+  }, 600 + Math.random() * 800);
+}
+
+function askQuick(q) {
+  document.getElementById('chatInput').value = q;
+  sendMessage();
+}
+
+// ===== Number Guessing Game =====
+let secretNumber = Math.floor(Math.random() * 100) + 1;
+let guessesLeft = 7;
+
+function makeGuess() {
+  const input = document.getElementById('guessInput');
+  const guess = parseInt(input.value);
+  const resultEl = document.getElementById('guessResult');
+  const hintEl = document.getElementById('guessHint');
+  if (isNaN(guess) || guess < 1 || guess > 100) {
+    resultEl.innerHTML = '⚠️ 请输入 1~100 之间的数字！';
+    resultEl.style.color = '#e8735a';
+    return;
+  }
+  guessesLeft--;
+  if (guess === secretNumber) {
+    resultEl.innerHTML = `🎉 恭喜！数字就是 ${secretNumber}！你用了 ${7 - guessesLeft} 次猜中！`;
+    resultEl.style.color = '#4caf84';
+    hintEl.innerHTML = '🏆 太棒了！';
+    document.getElementById('guessInput').disabled = true;
+  } else if (guessesLeft === 0) {
+    resultEl.innerHTML = `😢 游戏结束！正确答案是 ${secretNumber}`;
+    resultEl.style.color = '#e8735a';
+    hintEl.innerHTML = '💀 机会用完了';
+    document.getElementById('guessInput').disabled = true;
+  } else if (guess < secretNumber) {
+    resultEl.innerHTML = '📈 太小了，往大猜！';
+    resultEl.style.color = '#3b82c4';
+    hintEl.innerHTML = `🤔 你还有 <strong>${guessesLeft}</strong> 次机会`;
+  } else {
+    resultEl.innerHTML = '📉 太大了，往小猜！';
+    resultEl.style.color = '#e8735a';
+    hintEl.innerHTML = `🤔 你还有 <strong>${guessesLeft}</strong> 次机会`;
+  }
+  input.value = '';
+  input.focus();
+}
+
+function resetGuessGame() {
+  secretNumber = Math.floor(Math.random() * 100) + 1;
+  guessesLeft = 7;
+  document.getElementById('guessInput').disabled = false;
+  document.getElementById('guessInput').value = '';
+  document.getElementById('guessResult').innerHTML = '';
+  document.getElementById('guessHint').innerHTML = '🤔 你还有 <strong>7</strong> 次机会';
+}
+
+// ===== Typing Speed Test =====
+const typingTexts = [
+  "Artificial Intelligence changes the world.",
+  "The quick brown fox jumps over the lazy dog.",
+  "BigSmart is an AI student at Oxford University.",
+  "Knowledge graphs and RAG are powerful tools.",
+  "Open source makes the world a better place.",
+  "Computer vision can detect floating objects in rivers.",
+  "Innovation distinguishes between a leader and a follower."
+];
+let typingStartTime = null;
+
+function checkTyping() {
+  const input = document.getElementById('typingInput');
+  const target = document.getElementById('typingTarget').textContent;
+  const feedback = document.getElementById('typingFeedback');
+  if (!typingStartTime && input.value.length > 0) {
+    typingStartTime = Date.now();
+  }
+  if (input.value === target) {
+    const elapsed = (Date.now() - typingStartTime) / 1000;
+    const words = target.split(' ').length;
+    const wpm = Math.round(words / (elapsed / 60));
+    const accuracy = Math.round((target.length / input.value.length) * 100);
+    document.getElementById('typingTime').textContent = elapsed.toFixed(1) + 's';
+    document.getElementById('typingWPM').textContent = wpm;
+    document.getElementById('typingAccuracy').textContent = accuracy + '%';
+    feedback.innerHTML = '🎉 完成！干得漂亮！';
+    feedback.style.color = '#4caf84';
+  } else if (input.value.length > 0) {
+    let correctPart = '';
+    for (let i = 0; i < input.value.length; i++) {
+      if (input.value[i] === target[i]) correctPart += input.value[i];
+      else break;
+    }
+    if (input.value.length - correctPart.length > 0) {
+      feedback.innerHTML = '⚠️ 有错别字，请注意！';
+      feedback.style.color = '#e8735a';
+    } else {
+      feedback.innerHTML = '✅ 继续输入...';
+      feedback.style.color = '#4caf84';
+    }
+    if (typingStartTime) {
+      document.getElementById('typingTime').textContent = ((Date.now() - typingStartTime) / 1000).toFixed(1) + 's';
+    }
+  }
+}
+
+function resetTypingGame() {
+  const newText = typingTexts[Math.floor(Math.random() * typingTexts.length)];
+  document.getElementById('typingTarget').textContent = newText;
+  document.getElementById('typingInput').value = '';
+  document.getElementById('typingFeedback').innerHTML = '';
+  document.getElementById('typingTime').textContent = '0.0s';
+  document.getElementById('typingWPM').textContent = '0';
+  document.getElementById('typingAccuracy').textContent = '0%';
+  typingStartTime = null;
+}
+
+// ===== Reaction Time Test =====
+let reactionState = 'idle';
+let reactionTimeout = null;
+let reactionStartTime = 0;
+let reactionTimes = [];
+
+function reactClick() {
+  const box = document.getElementById('reactionBox');
+  const result = document.getElementById('reactionResult');
+  if (reactionState === 'idle') {
+    reactionState = 'waiting';
+    box.style.background = '#d4a853';
+    box.textContent = '等待绿色出现...';
+    result.innerHTML = '';
+    reactionTimeout = setTimeout(() => {
+      reactionState = 'ready';
+      reactionStartTime = Date.now();
+      box.style.background = '#4caf84';
+      box.textContent = '快点点击！';
+    }, 1500 + Math.random() * 3000);
+  } else if (reactionState === 'waiting') {
+    clearTimeout(reactionTimeout);
+    box.style.background = '#e8735a';
+    box.textContent = '太快了！等变绿再点！点击重试';
+    result.innerHTML = '⚠️ 别着急，要等绿色出现哦～';
+    result.style.color = '#e8735a';
+    reactionState = 'idle';
+  } else if (reactionState === 'ready') {
+    const time = Date.now() - reactionStartTime;
+    reactionTimes.push(time);
+    box.style.background = '#e8735a';
+    box.textContent = `${time} ms · 点击重试`;
+    result.innerHTML = `⚡ 反应时间：<strong>${time} ms</strong>`;
+    result.style.color = '#4caf84';
+    if (reactionTimes.length > 0) {
+      document.getElementById('reactionBest').textContent = Math.min(...reactionTimes) + ' ms';
+      document.getElementById('reactionAvg').textContent = Math.round(reactionTimes.reduce((a,b)=>a+b,0) / reactionTimes.length) + ' ms';
+    }
+    reactionState = 'idle';
+  }
+}
+
+console.log('🚀 BigSmart 个人博客已就绪！');
+console.log('💡 点击顶部按钮切换板块，试试 AI 问答和小游戏吧～');
+</script>
+
+</body>
+</html>
